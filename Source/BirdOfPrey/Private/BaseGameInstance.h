@@ -6,6 +6,8 @@
 #include "Engine/GameInstance.h"
 #include "BaseGameInstance.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAgentInfoChange);
+
 USTRUCT(BlueprintType)
 struct FSAgentInfo
 {
@@ -16,35 +18,45 @@ public:
     FText Name;
 
     UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
-    TSubclassOf<AActor> BaseWeaponType;
+    TSubclassOf<AActor> WeaponType;
 
     UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
     USkeletalMesh* SkeletalMesh;
 
     UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
-    UAnimInstance* AnimInstance;
+    TSubclassOf<UAnimInstance> AnimInstance;
 
     UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
-    UTexture2D* Image;    
+    UTexture2D* Image;
+
+    UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
+    float Health;
+
+    UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
+    FLinearColor Colour;
+
+    UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
+    float MeshScale;
+
+    UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
+    float Speed;
 };
 
-/**
- * 
- */
 UCLASS()
 class UBaseGameInstance : public UGameInstance
 {
     GENERATED_BODY()
 
 public:
-
     UPROPERTY(BlueprintReadWrite, Category = "BirdOfPrey")
     TArray<FSAgentInfo> PlayerAgentInfo;
 
-    UFUNCTION(BlueprintCallable, Category = "BirdOfPrey")
-    void SetPlayerAgentInfoFor(int PlayerControllerID, FSAgentInfo& info);
+    UPROPERTY(BlueprintAssignable, Category = "BirdOfPrey")
+    FOnAgentInfoChange OnAgentInfoChange;
 
     UFUNCTION(BlueprintCallable, Category = "BirdOfPrey")
-    FSAgentInfo& GetPlayerAgentInfoFor(int PlayerControllerID, bool &Result);
-	
+    void SetPlayerAgentInfoFor(int PlayerControllerID, FSAgentInfo& Info);
+
+    UFUNCTION(BlueprintCallable, Category = "BirdOfPrey")
+    FSAgentInfo& GetPlayerAgentInfoFor(int PlayerControllerID, bool& Result);
 };
